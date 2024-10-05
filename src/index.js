@@ -94,7 +94,7 @@ function startButtonHandler() {
   startButton.classList.add('hidden');
 
   // 4. Unhide the status element by removing the `.hidden` class
-  const statusElement = document.getElementById('status'); // Assuming status element has this ID
+  const statusElement = document.querySelector('.status.hidden.js-status'); 
   statusElement.classList.remove('hidden');
 
   // 5. Call `playComputerTurn()` to start the game with the computer going first
@@ -185,17 +185,19 @@ function setLevel(level = 1) {
  * getRandomItem([1, 2, 3, 4]) //> returns 1
  */
 function getRandomItem(collection) {
-  // if (collection.length === 0) return null;
-  // const randomIndex = Math.floor(Math.random() * collection.length);
-  // return collection[randomIndex];
+  if (collection.length === 0) {
+    return null;
+  }
+  const randomIndex = Math.floor(Math.random() * collection.length);
+  return collection[randomIndex];
 }
 
 /**
  * Sets the status text of a given HTML element with a given a message
  */
 function setText(element, text) {
-  // TODO: Write your code here.
-  return element;
+  element.textContent = text;
+    return element;
 }
 
 /**
@@ -212,7 +214,13 @@ function setText(element, text) {
  */
 
 function activatePad(color) {
-  // TODO: Write your code here.
+const pad = pads.find(pad => pad.color === color);
+const padElement = document.querySelector(`.pad.pad-${pad.color}.js-pad-${pad.color}`); 
+statusElement.classList.add('activated');
+pad.sound.play();
+setTimeout(() => {
+    padElement.classList.remove('activated');
+  }, 500);
 }
 
 /**
