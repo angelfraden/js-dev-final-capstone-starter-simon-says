@@ -60,7 +60,9 @@ let roundCount = 0; // track the number of rounds that have been played so far
  */
 
 padContainer.addEventListener("click", padHandler);
-// TODO: Add an event listener `startButtonHandler()` to startButton.
+
+const startButton = document.getElementById('startButton'); 
+startButton.addEventListener("click", startButtonHandler);
 
 /**
  * EVENT HANDLERS
@@ -81,9 +83,22 @@ padContainer.addEventListener("click", padHandler);
  *
  */
 function startButtonHandler() {
-  // TODO: Write your code here.
+  // 1. Call setLevel() to set the level of the game
+  const roundsToWin = setLevel(); // Set the level and get the number of rounds needed to win
 
-  return { startButton, statusSpan };
+  // 2. Increment the roundCount from 0 to 1
+  let roundCount = 1;
+
+  // 3. Hide the start button by adding the `.hidden` class to the start button
+  const startButton = document.querySelector('.start-button.js-start-button'); 
+  startButton.classList.add('hidden');
+
+  // 4. Unhide the status element by removing the `.hidden` class
+  const statusElement = document.getElementById('status'); // Assuming status element has this ID
+  statusElement.classList.remove('hidden');
+
+  // 5. Call `playComputerTurn()` to start the game with the computer going first
+  playComputerTurn();
 }
 
 /**
@@ -136,9 +151,23 @@ function padHandler(event) {
  * setLevel(8) //> returns "Please enter level 1, 2, 3, or 4";
  *
  */
+
 function setLevel(level = 1) {
-  // TODO: Write your code here.
+  // Define the number of rounds for each level
+  const rounds = {
+    1: 8,
+    2: 14,
+    3: 20,
+    4: 31
+  };
+  // Check if the provided level is valid (1 - 4)
+  if (rounds[level]) {
+    return rounds[level]; // Return the number of rounds for the valid level
+  } else {
+    return "Please enter level 1, 2, 3, or 4"; // Return error message for invalid levels
+  }
 }
+
 
 /**
  * Returns a randomly selected item from a given array.
