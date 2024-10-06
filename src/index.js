@@ -120,9 +120,13 @@ function startButtonHandler() {
  */
 function padHandler(event) {
   const { color } = event.target.dataset;
-  if (!color) return;
-
-  // TODO: Write your code here.
+  if (!color) return false;
+  let pad = pads.find(p => p.color === color);
+  if (pad) { // Check if the pad was found
+    pad.sound.play(); // Play the sound for the pad
+    checkPress(color); // Verify the player's selection
+  }
+checkPress(color); 
   return color;
 }
 
@@ -292,7 +296,11 @@ activatePads(computerSequence);
  * 2. Display a status message showing the player how many presses are left in the round
  */
 function playHumanTurn() {
-  // TODO: Write your code here.
+let padContainerElement = document.querySelector('.pad-container.unclickable.js-pad-container');
+padContainerElement.classList.remove('unclickable');
+const statusElement = document.querySelector('.js-status');
+const pressesLeft = computerSequence.length - playerSequence.length; // Calculate how many presses are left
+setText(statusElement, `Your turn! ${pressesLeft} presses left...`);
 }
 
 /**
@@ -318,7 +326,15 @@ function playHumanTurn() {
  *
  */
 function checkPress(color) {
-  // TODO: Write your code here.
+  playerSequence.push(color);
+  let index = color.index;
+  let remainingPresses = computerSequence.length - playerSequence.length;
+  const statusElement = document.querySelector('.js-status');
+  setText(statusElement, `Your turn! ${remainingPresses} presses left...`);
+  if (computerSequence[index] !== playerSequence[index]) {
+    resetGame('Oops! Wrong turn, try again.');
+    return;
+  }
 }
 
 /**
@@ -337,7 +353,15 @@ function checkPress(color) {
  */
 
 function checkRound() {
-  // TODO: Write your code here.
+if (playerSequence.length === maxRoundCount) {
+  resetGame('Success!!!');
+} else {
+  roundCount++;
+  playerSequence = [];
+  let statusElement = document.querySelector('.js-status');
+  setText(statusElement, "Otsukaresama!! Good job, keep going!")
+    setTimeout(() => playComputerTurn(), 1000); 
+}
 }
 
 /**
