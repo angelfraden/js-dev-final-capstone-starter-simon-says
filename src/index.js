@@ -59,9 +59,12 @@ let roundCount = 0; // track the number of rounds that have been played so far
  * EVENT LISTENERS
  */
 
+// Event listener for pad container clicks
+const padContainer = document.querySelector('.js-pad-container');
 padContainer.addEventListener("click", padHandler);
 
-const startButton = document.getElementById('startButton'); 
+// Event listener for the start button
+const startButton = document.querySelector('.js-start-button'); 
 startButton.addEventListener("click", startButtonHandler);
 
 /**
@@ -374,14 +377,14 @@ if (playerSequence.length === maxRoundCount) {
  * 3. Reset `roundCount` to an empty array
  */
 function resetGame(text) {
-  // TODO: Write your code here.
-
-  // Uncomment the code below:
-  // alert(text);
-  // setText(heading, "Simon Says");
-  // startButton.classList.remove("hidden");
-  // statusSpan.classList.add("hidden");
-  // padContainer.classList.add("unclickable");
+  computerSequence = [];
+  playerSequence = [];
+  roundCount = 0;
+ alert(text);
+ setText(heading, "Simon Says: IKIGAI");
+startButton.classList.remove("hidden");
+statusSpan.classList.add("hidden");
+ padContainer.classList.add("unclickable");
 }
 
 /**
