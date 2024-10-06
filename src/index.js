@@ -238,7 +238,11 @@ setTimeout(() => {
  */
 
 function activatePads(sequence) {
-  // TODO: Write your code here.
+sequence.forEach(element => {
+  setTimeout(() => {
+    activatePad(color); 
+  }, 600 * (index + 1)); 
+});
 }
 
 /**
@@ -264,10 +268,20 @@ function activatePads(sequence) {
  * to the current round (roundCount) multiplied by 600ms which is the duration for each pad in the
  * sequence.
  */
- function playComputerTurn() {
-  // TODO: Write your code here.
-
-  setTimeout(() => playHumanTurn(roundCount), roundCount * 600 + 1000); // 5
+ 
+function playComputerTurn() {
+const padContainer = document.querySelector('.pad-container.unclickable.js-pad-container');
+padContainer.classList.add('unclickable');
+const statusElement = document.querySelector('.js-status');
+  setText(statusElement, "The computer's turn...");
+const headingElement = document.querySelector('.js-heading');
+  setText(headingElement, `Round ${roundCount} of ${maxRoundCount}`);
+const colors = pads.map(pad => pad.color); 
+const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
+  const randomColor = colors[randomIndex];  
+computerSequence.push(randomColor);
+activatePads(computerSequence);  
+  setTimeout(() => playHumanTurn(roundCount), roundCount * 600 + 1000);
 }
 
 /**
