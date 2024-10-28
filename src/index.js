@@ -2,18 +2,20 @@
  * DOM SELECTORS
  */
 
- const startButton = document.querySelector(".js-start-button");
- // TODO: Add the missing query selectors:
- const statusSpan = document.querySelector('.status.hidden.js-status'); // Use querySelector() to get the status element
- const heading = document.querySelector('.js-heading'); // Use querySelector() to get the heading element
- const padContainer = document.querySelector('.pad-container unclickable js-pad-container'); // Use querySelector() to get the heading element
+
+
+
+const startButton = document.querySelector(".js-start-button");
+const statusSpan = document.querySelector('.js-status');
+const heading = document.querySelector('.js-heading');
+const padContainer = document.querySelector('.js-pad-container'); // Use querySelector() to get the heading element
 
 /**
  * VARIABLES
  */
 let computerSequence = []; // track the computer-generated sequence of pad presses
 let playerSequence = []; // track the player-generated sequence of pad presses
-let maxRoundCount = 0; // the max number of rounds, varies with the chosen level
+let maxRoundCount = 4; // the max number of rounds, varies with the chosen level
 let roundCount = 0; // track the number of rounds that have been played so far
 
 /**
@@ -31,40 +33,25 @@ let roundCount = 0; // track the number of rounds that have been played so far
  *
  */
 
- const pads = [
-  {
-    color: "red",
-    selector: document.querySelector(".js-pad-red"),
-    sound: new Audio("../assets/simon-says-sound-1.mp3"),
-  },
-  {
-    color: "green",
-    selector: document.querySelector(".js-pad-green"),
-    sound: new Audio("../assets/simon-says-sound-2.mp3"),
-  },
-  {
-    color: "blue",
-    selector: document.querySelector(".js-pad-blue"),
-    sound: new Audio("../assets/simon-says-sound-3.mp3"),
-  },
-  {
-    color: "yellow",
-    selector: document.querySelector(".js-pad-yellow"),
-    sound: new Audio("../assets/simon-says-sound-4.mp3"),
-  },
+
+  let pads = [
+    { color: "red", selector: document.querySelector(".js-pad-red"), sound: new Audio("../assets/simon-says-sound-1.mp3") },
+    { color: "green", selector: document.querySelector(".js-pad-green"), sound: new Audio("../assets/simon-says-sound-2.mp3") },
+    { color: "blue", selector: document.querySelector(".js-pad-blue"), sound: new Audio("../assets/simon-says-sound-3.mp3") },
+    { color: "yellow", selector: document.querySelector(".js-pad-yellow"), sound: new Audio("../assets/simon-says-sound-4.mp3") }
+  ];
+
   // TODO DONE: Add the objects for the green, blue, and yellow pads. Use object for the red pad above as an example.
-];
+
 
 /**
  * EVENT LISTENERS
  */
 
 // Event listener for pad container clicks
-const padContainer = document.querySelector('.js-pad-container');
 padContainer.addEventListener("click", padHandler);
 
 // Event listener for the start button
-const startButton = document.querySelector('.js-start-button'); 
 startButton.addEventListener("click", startButtonHandler);
 
 /**
@@ -85,24 +72,34 @@ startButton.addEventListener("click", startButtonHandler);
  * 5. Call `playComputerTurn()` to start the game with the computer going first.
  *
  */
+
+
 function startButtonHandler() {
   // 1. Call setLevel() to set the level of the game
   const roundsToWin = setLevel(); // Set the level and get the number of rounds needed to win
 
   // 2. Increment the roundCount from 0 to 1
-  let roundCount = 1;
+  roundCount = 1;
 
+  const startButton = document.querySelector('.js-start-button');
+ 
   // 3. Hide the start button by adding the `.hidden` class to the start button
-  const startButton = document.querySelector('.start-button.js-start-button'); 
   startButton.classList.add('hidden');
 
+  const statusSpan = document.querySelector('.js-status');
+
   // 4. Unhide the status element by removing the `.hidden` class
-  const statusElement = document.querySelector('.status.hidden.js-status'); 
-  statusElement.classList.remove('hidden');
+
+// 4.5. Check if statusSpan is defined
+if (statusSpan) { 
+  statusSpan.classList.remove('hidden');
+} else {
+  console.error('Status span not found!');
+}
 
   // 5. Call `playComputerTurn()` to start the game with the computer going first
   playComputerTurn();
-}
+};
 
 /**
  * Called when one of the pads is clicked.
@@ -123,13 +120,12 @@ function startButtonHandler() {
  */
 function padHandler(event) {
   const { color } = event.target.dataset;
-  if (!color) return false;
+  if (!color) return ;
   let pad = pads.find(p => p.color === color);
   if (pad) { // Check if the pad was found
     pad.sound.play(); // Play the sound for the pad
     checkPress(color); // Verify the player's selection
   }
-checkPress(color); 
   return color;
 }
 
@@ -168,10 +164,11 @@ function setLevel(level = 1) {
     4: 31
   };
   // Check if the provided level is valid (1 - 4)
-  if (rounds[level]) {
-    return rounds[level]; // Return the number of rounds for the valid level
+  if (rounds[Number(level)]) {
+    return rounds[Number(level)]; // Return the number of rounds for the valid level
   } else {
-    return "Please enter level 1, 2, 3, or 4"; // Return error message for invalid levels
+    return("Invalid level. Please enter a valid level (1, 2, 3, or 4).");
+    // Return null for invalid levels
   }
 }
 
@@ -221,11 +218,15 @@ function setText(element, text) {
  */
 
 function activatePad(color) {
-const pad = pads.find(pad => pad.color === color);
-const padElement = document.querySelector(`.pad.pad-${pad.color}.js-pad-${pad.color}`); 
-statusElement.classList.add('activated');
-pad.sound.play();
-setTimeout(() => {
+  const pad = pads.find(pad => pad.color === color);
+  if (!pad) {
+    console.error('No valid color for activation');
+    return;
+  }
+  const padElement = pad.selector; // Using already stored DOM element
+  padElement.classList.add('activated');
+  pad.sound.play();
+  setTimeout(() => {
     padElement.classList.remove('activated');
   }, 500);
 }
@@ -245,11 +246,16 @@ setTimeout(() => {
  */
 
 function activatePads(sequence) {
-sequence.forEach(element => {
-  setTimeout(() => {
-    activatePad(color); 
-  }, 600 * (index + 1)); 
-});
+  sequence.forEach((color, index) => {
+    if (!color) {
+      console.error('Undefined color in sequence:', sequence);
+      return;
+    }
+    setTimeout(() => {
+      activatePad(color); 
+  // Ensure that `activatePad` is being passed valid colors
+    }, index * 600);
+  });
 }
 
 /**
@@ -277,19 +283,25 @@ sequence.forEach(element => {
  */
  
 function playComputerTurn() {
-const padContainer = document.querySelector('.pad-container.unclickable.js-pad-container');
 padContainer.classList.add('unclickable');
 const statusElement = document.querySelector('.js-status');
   setText(statusElement, "The computer's turn...");
 const headingElement = document.querySelector('.js-heading');
   setText(headingElement, `Round ${roundCount} of ${maxRoundCount}`);
+
 const colors = pads.map(pad => pad.color); 
 const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
   const randomColor = colors[randomIndex];  
+
 computerSequence.push(randomColor);
 activatePads(computerSequence);  
-  setTimeout(() => playHumanTurn(roundCount), roundCount * 600 + 1000);
-}
+  // Calculate the total duration of the sequence
+  const totalDuration = computerSequence.length * 600; // Each pad activation takes 600ms
+
+  // Call playHumanTurn after the computer's sequence is complete (1 second delay after last pad)
+  setTimeout(() => { 
+    playHumanTurn(); setText(statusElement, "Player's Turn");}, totalDuration + 1000);
+};
 
 /**
  * Allows the player to play their turn.
@@ -299,11 +311,9 @@ activatePads(computerSequence);
  * 2. Display a status message showing the player how many presses are left in the round
  */
 function playHumanTurn() {
-let padContainerElement = document.querySelector('.pad-container.unclickable.js-pad-container');
-padContainerElement.classList.remove('unclickable');
-const statusElement = document.querySelector('.js-status');
+padContainer.classList.remove('unclickable');
 const pressesLeft = computerSequence.length - playerSequence.length; // Calculate how many presses are left
-setText(statusElement, `Your turn! ${pressesLeft} presses left...`);
+setText(statusSpan, `Player turn! ${pressesLeft} presses left...`);
 }
 
 /**
@@ -330,7 +340,7 @@ setText(statusElement, `Your turn! ${pressesLeft} presses left...`);
  */
 function checkPress(color) {
   playerSequence.push(color);
-  let index = color.index;
+  let index = playerSequence.length - 1;
   let remainingPresses = computerSequence.length - playerSequence.length;
   const statusElement = document.querySelector('.js-status');
   setText(statusElement, `Your turn! ${remainingPresses} presses left...`);
@@ -338,6 +348,9 @@ function checkPress(color) {
     resetGame('Oops! Wrong turn, try again.');
     return;
   }
+  if (remainingPresses === 0) {
+    checkRound();
+}
 }
 
 /**
@@ -381,17 +394,22 @@ function resetGame(text) {
   playerSequence = [];
   roundCount = 0;
  alert(text);
- setText(heading, "Simon Says: IKIGAI");
+ setText(heading, "Simon Says");
 startButton.classList.remove("hidden");
 statusSpan.classList.add("hidden");
  padContainer.classList.add("unclickable");
-}
+};
+
+ //wrapped DOMContentLoaded optional
 
 /**
+ 
+
  * Please do not modify the code below.
  * Used for testing purposes.
  *
  */
+
 window.statusSpan = statusSpan;
 window.heading = heading;
 window.padContainer = padContainer;
