@@ -79,7 +79,7 @@ function startButtonHandler() {
   const roundsToWin = setLevel(); // Set the level and get the number of rounds needed to win
 
   // 2. Increment the roundCount from 0 to 1
-  roundCount = 1;
+  roundCount += 1;
 
   const startButton = document.querySelector('.js-start-button');
  
@@ -99,7 +99,14 @@ if (statusSpan) {
 
   // 5. Call `playComputerTurn()` to start the game with the computer going first
   playComputerTurn();
+if (roundCount > roundsToWin) {
+  setText(statusSpan, "Congratulations! You've completed all rounds!");
+  // Optionally reset the game or provide options for replay
+  resetGame();
+  return;
 };
+}
+
 
 /**
  * Called when one of the pads is clicked.
@@ -314,6 +321,11 @@ function playHumanTurn() {
 padContainer.classList.remove('unclickable');
 const pressesLeft = computerSequence.length - playerSequence.length; // Calculate how many presses are left
 setText(statusSpan, `Player turn! ${pressesLeft} presses left...`);
+if (pressesLeft === 0) {
+  roundCount += 1;
+  playerSequence = [];
+  playComputerTurn();
+}
 }
 
 /**
