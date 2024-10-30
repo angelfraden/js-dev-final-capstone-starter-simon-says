@@ -17,6 +17,7 @@ let computerSequence = []; // track the computer-generated sequence of pad press
 let playerSequence = []; // track the player-generated sequence of pad presses
 let maxRoundCount = 4; // the max number of rounds, varies with the chosen level
 let roundCount = 0; // track the number of rounds that have been played so far
+let roundsToWin = setLevel();
 
 /**
  *
@@ -76,7 +77,7 @@ startButton.addEventListener("click", startButtonHandler);
 
 function startButtonHandler() {
   // 1. Call setLevel() to set the level of the game
-  const roundsToWin = setLevel(); // Set the level and get the number of rounds needed to win
+  setLevel(); // Set the level and get the number of rounds needed to win
 
   // 2. Increment the roundCount from 0 to 1
   roundCount += 1;
@@ -128,7 +129,7 @@ if (roundCount > roundsToWin) {
 function padHandler(event) {
   const { color } = event.target.dataset;
   if (!color) return ;
-  let pad = pads.find(p => p.color === color);
+  const pad = pads.find(p => p.color === color);
   if (pad) { // Check if the pad was found
     pad.sound.play(); // Play the sound for the pad
     checkPress(color); // Verify the player's selection
@@ -360,8 +361,20 @@ function checkPress(color) {
     resetGame('Oops! Wrong turn, try again.');
     return;
   }
-  if (remainingPresses === 0) {
-    checkRound();
+ 
+if (playerSequence.length === computerSequence.length) {
+  // Check if player has won the level
+  if (roundCount >= roundsToWin) {
+    setText(statusSpan, "Congratulations! You've completed all rounds!");
+    resetGame("INCREDIBLE. YOU WON!");
+    return;
+  }
+
+  // If not yet at the end, progress to the next round
+  roundCount += 1;
+  playerSequence = []; // Reset player sequence for the next round
+  setText(statusSpan, `New level! Starting Round ${roundCount}`);
+  playComputerTurn(); // Start the next round
 }
 }
 
@@ -401,7 +414,7 @@ if (playerSequence.length === maxRoundCount) {
  *
  * 3. Reset `roundCount` to an empty array
  */
-function resetGame(text) {
+function resetGame(text = "Game Over.") {
   computerSequence = [];
   playerSequence = [];
   roundCount = 0;
