@@ -19,9 +19,7 @@ body {
   display: flex;
   justify-content: center;
   height: 100vh;
-  align-items: center;
-  
-  
+  align-items: center;  
 }
 
 main {
@@ -46,25 +44,29 @@ main {
 h1 {
   text-align: center;
   font-size: 60px;
-}
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);}
 
 .game-controls {
   text-align: center;
 }
 
 .start-button {
-  display: inline-block;
+  display: inline-flex;;
   height: 38px;
   padding: 0 30px;
+  font-family: 'Danfo', serif;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
   color: rgb(89, 255, 0);
-  text-align: center;
-  font-size: 14px;
+  justify-content: center; /* Center text horizontally */
+  align-items: center;
+  font-size: 30px;
   font-weight: 600;
   text-transform: uppercase;
   background-color: transparent;
   border: 1px solid rgb(89, 255, 0);
   cursor: pointer;
   margin-bottom: 20px;
+  align-content: center;
 }
 
 .start-button:hover {
@@ -103,6 +105,8 @@ h1 {
 .pad-red.activated {
   background-color: rgb(162, 36, 36);
   transform: translateY(10px);
+  box-shadow: 0px 0px 15px 5px white;
+
 }
 
 .pad-green {
@@ -120,6 +124,8 @@ h1 {
 .pad-green.activated {
   background-color: rgb(9, 249, 9);
   transform: translateY(10px);
+  box-shadow: 0px 0px 15px 5px white;
+
 }
 
 .pad-yellow {
@@ -137,6 +143,8 @@ h1 {
 .pad-yellow.activated {
   background-color: #ffca3d;
   transform: translateY(10px);
+  box-shadow: 0px 0px 15px 5px white;
+
 }
 
 .pad-blue {
@@ -154,6 +162,8 @@ h1 {
 .pad-blue.activated {
   background-color: #139ddd;
   transform: translateY(10px);
+  box-shadow: 0px 0px 15px 5px white;
+
 }
 
 .hidden {

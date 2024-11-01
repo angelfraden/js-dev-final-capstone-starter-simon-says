@@ -304,7 +304,7 @@ const randomIndex = Math.floor(Math.random() * colors.length); // Generate a ran
 computerSequence.push(randomColor);
 activatePads(computerSequence);  
   // Calculate the total duration of the sequence
-  const totalDuration = computerSequence.length * 600; // Each pad activation takes 600ms
+  const totalDuration = computerSequence.length * 1000; // Each pad activation takes 600ms
 
   // Call playHumanTurn after the computer's sequence is complete (1 second delay after last pad)
   setTimeout(() => { 
@@ -320,13 +320,13 @@ activatePads(computerSequence);
  */
 function playHumanTurn() {
 padContainer.classList.remove('unclickable');
-const pressesLeft = computerSequence.length - playerSequence.length; // Calculate how many presses are left
-setText(statusSpan, `Player turn! ${pressesLeft} presses left...`);
+const pressesLeft = computerSequence.length - playerSequence.length; 
 if (pressesLeft === 0) {
   roundCount += 1;
   playerSequence = [];
-  playComputerTurn();
-}
+  setTimeout(() => playComputerTurn(), 2000);
+setText(statusSpan, `Player turn! ${pressesLeft} presses left...`);
+};// Calculate how many presses are left
 }
 
 /**
@@ -401,7 +401,7 @@ if (playerSequence.length === maxRoundCount) {
   playerSequence = [];
   let statusElement = document.querySelector('.js-status');
   setText(statusElement, "Otsukaresama!! Good job, keep going!")
-    setTimeout(() => playComputerTurn(), 1000); 
+    setTimeout(() => playComputerTurn(), 2000); 
 }
 }
 
