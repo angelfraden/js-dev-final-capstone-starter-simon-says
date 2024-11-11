@@ -15,7 +15,7 @@ const padContainer = document.querySelector('.js-pad-container'); // Use querySe
  */
 let computerSequence = []; // track the computer-generated sequence of pad presses
 let playerSequence = []; // track the player-generated sequence of pad presses
-let maxRoundCount = 4; // the max number of rounds, varies with the chosen level
+let maxRoundCount = 10; // the max number of rounds, varies with the chosen level
 let roundCount = 0; // track the number of rounds that have been played so far
 let roundsToWin = setLevel();
 
@@ -291,25 +291,28 @@ function activatePads(sequence) {
  */
  
 function playComputerTurn() {
-padContainer.classList.add('unclickable');
-const statusElement = document.querySelector('.js-status');
+  padContainer.classList.add('unclickable');
+  const statusElement = document.querySelector('.js-status');
   setText(statusElement, "The computer's turn...");
-const headingElement = document.querySelector('.js-heading');
+  const headingElement = document.querySelector('.js-heading');
   setText(headingElement, `Round ${roundCount} of ${maxRoundCount}`);
-
-const colors = pads.map(pad => pad.color); 
-const randomIndex = Math.floor(Math.random() * colors.length); // Generate a random index
-  const randomColor = colors[randomIndex];  
-
-computerSequence.push(randomColor);
-activatePads(computerSequence);  
+ 
+  const colors = pads.map(pad => pad.color);
+  const randomIndex = Math.floor(Math.random() * colors.length);
+  const randomColor = colors[randomIndex];
+ 
+  computerSequence.push(randomColor);
+  activatePads(computerSequence);
+ 
   // Calculate the total duration of the sequence
-  const totalDuration = computerSequence.length * 1000; // Each pad activation takes 600ms
-
-  // Call playHumanTurn after the computer's sequence is complete (1 second delay after last pad)
+  const totalDuration = computerSequence.length * 700; // Each pad activation takes 700ms
+ 
+  // Call playHumanTurn after the computer's sequence is complete with an extended delay
   setTimeout(() => { 
-    playHumanTurn(); setText(statusElement, "Player's Turn");}, totalDuration + 1000);
-};
+    setText(statusElement, "Player's Turn");
+    playHumanTurn();
+  }, totalDuration + 1500); // Added a 1500ms buffer after the last pad to slow the transition
+}
 
 /**
  * Allows the player to play their turn.
@@ -318,17 +321,20 @@ activatePads(computerSequence);
  *
  * 2. Display a status message showing the player how many presses are left in the round
  */
-function playHumanTurn() {
-padContainer.classList.remove('unclickable');
-const pressesLeft = computerSequence.length - playerSequence.length; 
-if (pressesLeft === 0) {
-  roundCount += 1;
-  playerSequence = [];
-  setTimeout(() => playComputerTurn(), 2000);
-setText(statusSpan, `Player turn! ${pressesLeft} presses left...`);
-};// Calculate how many presses are left
-}
 
+function playHumanTurn() {
+  padContainer.classList.remove('unclickable');
+  const pressesLeft = computerSequence.length - playerSequence.length;
+  setText(statusSpan, `Player turn! ${pressesLeft} presses left...`);
+ 
+  if (pressesLeft === 0) {
+    setTimeout(() => {
+      roundCount += 1;
+      playerSequence = [];
+      playComputerTurn();
+    }, 1500);
+  }
+}
 /**
  * Checks the player's selection every time the player presses on a pad during
  * the player's turn
